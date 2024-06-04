@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta property="og:title" content="Glur io: play online / играть онлайн">
+    <meta property="og:description" content="Приватный сервер очень похожий на glor.io!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://glur.io">
+    <meta property="og:image" content="<%= require('../src/assets').Images.ImagesSociallogo.getPNG() %>">
+    <link rel="shortcut icon" href="<%= require('../src/assets').Images.FrontendFavicon.getICO() %>"/>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <meta name="description" content="Survive and build your base, defending it from rivals. Fight for glory!">
+    <meta name="keywords" content="game,games,gaming,online,io,multiplayer,glory,glorio,village,castle,glar.io,glur.io,glario,glurio,glury,glur">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC|Handlee|Roboto|Slabo+27px|Hammersmith One|Open Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="<%= require('../src/assets').Misc.CssStyle.getCSS() %>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="preroll"></div>
+<script type="text/javascript">
+    function initAipPreroll() {
+        if (typeof aipPlayer != "undefined") {
+            window.adplayer = new aipPlayer({
+                AD_WIDTH: 960,
+                AD_HEIGHT: 540,
+                AD_FULLSCREEN: true,
+                PREROLL_ELEM: document.getElementById('preroll'),
+                AIP_COMPLETE: function () {
+                    /*******************
+                     ***** WARNING *****
+                     *******************
+                     Please do not remove the PREROLL_ELEM
+                     from the page, it will be hidden automaticly.
+                     If you do want to remove it use the AIP_REMOVE callback below
+                     */
+                    if (window.adplayer.onadcompleted) {
+                        window.adplayer.onadcompleted();
+                    }
+                },
+                AIP_REMOVE: function () {
+                    // Here it's save to remove the PREROLL_ELEM from the page
+                    // But it's not necessary
+                }
+            });
+        } else {
+            // Failed to load the adslib ads are probably blocked
+            // don't call the startPreRoll function.
+            // it will result in an error.
+        }
+    }
+
+    function getScript(src, callback) {
+        var headElm = document.head || document.getElementsByTagName('head')[0];
+        var script = document.createElement("script");
+        var once = true;
+        script.async = "async";
+        script.type = "text/javascript";
+        script.charset = "UTF-8";
+        script.src = src;
+        script.onload = script.onreadystatechange = function () {
+            if (once && (!script.readyState || /loaded|complete/.test(script.readyState))) {
+                once = false;
+                callback();
+                script.onload = script.onreadystatechange = null;
+            }
+        };
+
+        headElm.appendChild(script);
+    }
+
+    getScript('//api.adinplay.com/player/v2/GLR/glor.io/player.min.js', initAipPreroll);
+</script>
+<script type="text/javascript">
+    function showInstructions() {
+        document.getElementById('instructions').style.display = 'block';
+    }
+    function showYoutubers() {
+        document.getElementById('youtubers').style.display = 'block';
+    }
+
+    function hideChangelog() {
+        document.getElementById('changelog').style.display = 'none';
+    }
+    function hideInstructions() {
+        document.getElementById('instructions').style.display = 'none';
+    }
+    function hideYoutubers() {
+        document.getElementById('youtubers').style.display = 'none';
+    }
+    function reload() {
+        window.location.replace('/');
+    }
+</script>
+<div class="preloader" id="preloader-screen">
+    <div class="preloader-content">
+        <div class="loading-logo">
+            <img src="<%= require('../src/assets').Images.FrontendLoad.getGIF() %>" width="400px" height="213px"/>
+        </div>
+        <div class="loading-message">
+            Запуск игры...
+        </div>
+    </div>
+</div>
+<div id="crashscreen">
+    <div class="crashcontent">
+        <div class="crashimage"><img width="300px" height="300px"
+                                     src="<%= require('../src/assets').Images.FrontendCrash.getPNG() %>"/></div>
+        <div class="crashtitle">Наш сервер не роботает :(</div>
+        <div class="crashtitle">Мы уже собираемся это исправить!</div>
+        <div class="crashbutton" onclick="reload();">Попробуйте еще раз!</div>
+    </div>
+</div>
+
+<div id="serverfullscreen">
+    <div class="serverfullcontent">
+        <div class="serverfullimage"><img width="300px" height="300px"
+                                          src="<%= require('../src/assets').Images.FrontendCrash.getPNG() %>"/></div>
+        <div class="serverfulltitle">Сервер полон :(</div>
+        <div class="serverfulltitle">Новые сервера на подходе!</div>
+        <div class="serverfulltitle">Испытайте удачу и нажмите &darr; button &darr;</div>
+        <div class="serverfullbutton" onclick="reload();">Попробуйте еще раз!</div>
+    </div>
+</div>
+
+<div id="kickedscreen">
+    <div class="serverfullcontent">
+        <div class="serverfullimage"><img width="300px" height="300px"
+                                          src="<%= require('../src/assets').Images.FrontendCrash.getPNG() %>"/></div>
+        <div class="serverfulltitle">Вас кикнули с сервера из-за неактивности!</div>
+        <div class="serverfulltitle">Просто нажмите &darr; button &darr;</div>
+        <div class="serverfullbutton" onclick="reload();">Восстановить соединение!</div>
+    </div>
+</div>
+
+<div id="game-layout">
+    <div id="ui-hat-list-container">
+        <div class="ui-hat-list-header">
+            Твои шапочки
+            <div class="ui-hat-list-close" id="ui-hat-list-close">X</div>
+        </div>
+        <div class="ui-hat-list-content" id="ui-hat-list-content">
+        </div>
+        <div class="ui-hat-list-bottom">
+            <div class="ui-hat-close-button" id="ui-hat-close-button">
+                ЗАКРЫТЬ
+            </div>
+        </div>
+    </div>
+    <div id="ui-member-list-container">
+        <div class="ui-team-list-header">
+            Список вашего клана
+            <div class="ui-team-list-close" id="ui-team-list-close">X</div>
+        </div>
+        <div class="ui-member-list-content" id="ui-member-list-content">
+        </div>
+        <div class="ui-member-list-bottom">
+            <div class="ui-leave-button" id="ui-leave-team-button">
+                Выйти из клана
+            </div>
+        </div>
+    </div>
+    <div id="ui-team-list-container">
+        <div class="ui-team-list-header">
+            Кланы
+            <div class="ui-team-list-close" id="ui-team-list-close">X</div>
+        </div>
+        <div class="ui-team-list-content" id="ui-team-list-content">
+        </div>
+        <div class="ui-team-list-bottom">
+            <input class="ui-input-team-name" id="ui-input-team-name" maxlength="16" placeholder="Название клана"/>
+            <div class="ui-create-button" id="ui-create-team-button">
+                Создать клан
+            </div>
+        </div>
+    </div>
+    <div id="ui-join-request-list">
+
+    </div>
+    <div id="bottom-panel" class="menu">
+    </div>
+    <div id="left-panel" class="menu">
+    </div>
+    <div class="ui-stats-level">
+        <div id="ui-level-bar" class="ui-level-bar" style="width:100%;"><span class="ui-stats-level-text" id="ui-stats-level-text">Уровень: 1</span></div>
+    </div>
+    <div id="left-top-container">
+        <div class="ui-stats-resources" id="ui-stats-resources">
+
+        </div>
+        <div id="top-panel" class="menu">
+        </div>
+    </div>
+    <div id="inventory">
+    </div>
+    <div class="ui-leaderboard" id="leaderboard">
+        <div class="ui-leaderboard-player is-header">
+            <span class="player-rank">#0</span>
+            <span class="player-name">Имя</span>
+            <span class="player-score">Счет</span>
+        </div>
+    </div>
+    <div class="shop" id="shop">
+        <div class="list" id="shop-list">
+        </div>
+    </div>
+</div>
+<div id="lobby-layout" class="modal">
+    <div class="discord">
+        <a target="_blank" href="https://discord.gg/"><img
+                    src="<%= require('../src/assets').Images.FrontendDiscordLogo.getSVG() %>" width="100px"
+                    height="30px"/></a>
+    </div>
+
+    <div class="ui-leaderboard" id="weekly-leaderboard">
+        <div class="ui-leaderboard-header">
+            <span class="leaderboard-name">Еженедельная таблица</span>
+        </div>
+        <div class="ui-leaderboard-player is-header">
+            <span class="player-rank">#0</span>
+            <span class="player-name">Имя</span>
+            <span class="player-score">Счет</span>
+        </div>
+    </div>
+    <div class="motd" id="motd">
+        <div class="motdtitle">Версии</div>
+        <div class="motdcontent" id="motdcontent">
+        </div>
+    </div>
+
+    <div id="featuredyoutuber">
+        <div class="header">YT:</div>
+    </div>
+
+
+<title>GLUR IO</title>
+<style>
+  #title-logo {
+    font-size: 140px;
+    font-weight: bold;
+    text-transform: uppercase;
+    position: relative;
+    margin-top: -5px;
+  }
+
+  @keyframes shimmer {
+    0% { color: white; }
+    50% { color: gray; }
+    100% { color: white; }
+  }
+
+  #title-logo {
+    animation: shimmer 2s linear infinite;
+  }
+</style>
+</head>
+<body>
+  <div id="title-logo">GLUR IO</div>
+</body>
+</html>
+
+    <div id="subtitle-logo">Version 0.1</div>
+
+    <div class="container">
+        <div class="card" id="login">
+            <input type="text" id="login-input" placeholder="Введите имя" maxlength="15">
+            <div class="cardButton" id="login-button" onclick="">Войти в игру</div>
+            <select id="server-select">
+                <option disabled selected>loading...</option>
+            </select>
+            <script type="text/javascript">
+                (function () {
+                    document.getElementById('login-input').addEventListener('keydown', function (e) {
+                        if (e.keyCode === 13) {
+                            document.getElementById('login-button').onclick();
+                        }
+                    });
+                })();
+            </script>
+        </div>
+    </div>
+    <div class="footer">
+        <a href="mailto:glurio_game@gmail.com">Контакты</a>
+        <a href="#" onclick="showInstructions();">Как играть?</a>
+    </div>
+
+    <div class="window-darkbox" id="youtubers">
+        <div class="bigwindow">
+            <div class="wcontent">
+                <div class="cardHeader">Ютуберы/создатели:</div>
+                <div class="cardText">
+                    <p>The main page of the game displays featured Youtubers in random order. In order to get to this
+                        list you will need to record a video / gameplay of our game, and send the link to our
+                        e-mail.</p>
+                    <p>After that, we will add you to the list of featured ones, and the addition will occur with the
+                        next game update.</p>
+                    <p> It is important that your video does not contain content prohibited by the rules of YouTube!</p>
+                    <p>Looking forward to seeing your letters!</p>
+                </div>
+            </div>
+            <div class="window-close-button" onclick="hideYoutubers();">
+                Close
+            </div>
+        </div>
+    </div>
+    <div class="window-darkbox" id="instructions">
+        <div class="bigwindow">
+            <div class="wcontent">
+                <div class="cardHeader">Как играть?</div>
+                <div class="cardText">
+                    <p>Collect the resources around you, build walls and construct doors for protection.</p>
+                    <p>Collect eggs, kill animals, plant beds in order to get food.</p>
+                    <p>Create assistants: guards, peasants, mercenaries. Beware of wolves and other players.</p>
+                    <p>You can create your clan using "Create Party Link" button at the bottom of the page. After
+                        clicking on it, copy the link on the address bar of the browser and send it to your friends.</p>
+                    <p>The more gold you have, the higher your ranking in the leaderboard will be. Build towers to
+                        extract gold!</p>
+                    <p>You can hire units to accelerate your progress.</p>
+                </div>
+                <div class="cardHeader">Control:</div>
+                <div class="cardText">
+                    Move: W, A, S, D or arrows<br/>
+                    Look: Mouse<br/>
+                    Select building: 1-9 or click on the icon<br/>
+                    Attack / Gather: Click<br/>
+                </div>
+            </div>
+            <div class="window-close-button" onclick="hideInstructions();">
+                Close
+            </div>
+        </div>
+    </div>
+    <div id="gadmainmenubottom">
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <!-- glor.io mainmenu bottom -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-0334388716151269"
+             data-ad-slot="4492531527"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+</div>
+<div id="common-layout">
+    <div id="ping-container">
+        0 ms
+    </div>
+    <div id="partylink">
+        Создать ссылку на вечеринку
+    </div>
+</div>
+<div id="respawn-layout">
+    <div class="window-darkbox" id="respawn-window">
+        <div class="dynastio-banner">
+            <a href="http://discord.com" target="_blank"><img src="<%= require('../src/assets').Images.ImagesDynastiobanner.getPNG() %>" /></a>
+        </div>
+        <div class="window">
+            <div class="window-ad">
+                <div id="respawn-ad">
+                    <script>
+                    </script>
+                </div>
+            </div>
+            <div id="respawn-button" class="inactive">
+                Спавн через 5 секунд...
+            </div>
+        </div>
+    </div>
+</div>
+<div id="gamecanvas">
+
+</div>
+<script>
+    (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+    ga('create', 'UA-96362141-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+</body>
+</html>
